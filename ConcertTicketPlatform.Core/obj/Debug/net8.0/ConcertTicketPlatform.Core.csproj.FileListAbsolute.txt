@@ -1,0 +1,12 @@
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Core\bin\Debug\net8.0\ConcertTicketPlatform.Core.deps.json
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Core\bin\Debug\net8.0\ConcertTicketPlatform.Core.dll
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Core\bin\Debug\net8.0\ConcertTicketPlatform.Core.pdb
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Core\obj\Debug\net8.0\ConcertTicketPlatform.Core.csproj.AssemblyReference.cache
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Core\obj\Debug\net8.0\ConcertTicketPlatform.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Core\obj\Debug\net8.0\ConcertTicketPlatform.Core.AssemblyInfoInputs.cache
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Core\obj\Debug\net8.0\ConcertTicketPlatform.Core.AssemblyInfo.cs
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Core\obj\Debug\net8.0\ConcertTicketPlatform.Core.csproj.CoreCompileInputs.cache
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Core\obj\Debug\net8.0\ConcertTicketPlatform.Core.dll
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Core\obj\Debug\net8.0\refint\ConcertTicketPlatform.Core.dll
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Core\obj\Debug\net8.0\ConcertTicketPlatform.Core.pdb
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Core\obj\Debug\net8.0\ref\ConcertTicketPlatform.Core.dll

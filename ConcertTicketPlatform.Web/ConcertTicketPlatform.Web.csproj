@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+	<ItemGroup>
+		<ProjectReference Include="..\ConcertTicketPlatform.Core\ConcertTicketPlatform.Core.csproj" />
+		<ProjectReference Include="..\ConcertTicketPlatform.Infrastructure\ConcertTicketPlatform.Infrastructure.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="wwwroot\" />
+	</ItemGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+</Project>

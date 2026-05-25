@@ -1,0 +1,17 @@
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Infrastructure\bin\Debug\net9.0\ConcertTicketPlatform.Infrastructure.deps.json
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Infrastructure\bin\Debug\net9.0\ConcertTicketPlatform.Infrastructure.runtimeconfig.json
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Infrastructure\bin\Debug\net9.0\ConcertTicketPlatform.Infrastructure.dll
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Infrastructure\bin\Debug\net9.0\ConcertTicketPlatform.Infrastructure.pdb
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Infrastructure\bin\Debug\net9.0\ConcertTicketPlatform.Core.dll
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Infrastructure\bin\Debug\net9.0\ConcertTicketPlatform.Core.pdb
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Infrastructure\obj\Debug\net9.0\ConcertTicketPlatform.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Infrastructure\obj\Debug\net9.0\ConcertTicketPlatform.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Infrastructure\obj\Debug\net9.0\ConcertTicketPlatform.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Infrastructure\obj\Debug\net9.0\ConcertTicketPlatform.Infrastructure.AssemblyInfo.cs
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Infrastructure\obj\Debug\net9.0\ConcertTicketPlatform.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Infrastructure\obj\Debug\net9.0\ConcertT.A9A17CFC.Up2Date
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Infrastructure\obj\Debug\net9.0\ConcertTicketPlatform.Infrastructure.dll
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Infrastructure\obj\Debug\net9.0\refint\ConcertTicketPlatform.Infrastructure.dll
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Infrastructure\obj\Debug\net9.0\ConcertTicketPlatform.Infrastructure.pdb
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Infrastructure\obj\Debug\net9.0\ConcertTicketPlatform.Infrastructure.genruntimeconfig.cache
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Infrastructure\obj\Debug\net9.0\ref\ConcertTicketPlatform.Infrastructure.dll

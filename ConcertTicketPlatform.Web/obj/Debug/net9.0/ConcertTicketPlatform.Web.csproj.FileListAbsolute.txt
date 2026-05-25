@@ -1,0 +1,17 @@
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Web\bin\Debug\net9.0\ConcertTicketPlatform.Web.deps.json
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Web\bin\Debug\net9.0\ConcertTicketPlatform.Web.dll
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Web\bin\Debug\net9.0\ConcertTicketPlatform.Web.pdb
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Web\bin\Debug\net9.0\ConcertTicketPlatform.Core.dll
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Web\bin\Debug\net9.0\ConcertTicketPlatform.Infrastructure.dll
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Web\bin\Debug\net9.0\ConcertTicketPlatform.Core.pdb
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Web\bin\Debug\net9.0\ConcertTicketPlatform.Infrastructure.pdb
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Web\obj\Debug\net9.0\ConcertTicketPlatform.Web.csproj.AssemblyReference.cache
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Web\obj\Debug\net9.0\ConcertTicketPlatform.Web.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Web\obj\Debug\net9.0\ConcertTicketPlatform.Web.AssemblyInfoInputs.cache
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Web\obj\Debug\net9.0\ConcertTicketPlatform.Web.AssemblyInfo.cs
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Web\obj\Debug\net9.0\ConcertTicketPlatform.Web.csproj.CoreCompileInputs.cache
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Web\obj\Debug\net9.0\ConcertT.5BD5654A.Up2Date
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Web\obj\Debug\net9.0\ConcertTicketPlatform.Web.dll
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Web\obj\Debug\net9.0\refint\ConcertTicketPlatform.Web.dll
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Web\obj\Debug\net9.0\ConcertTicketPlatform.Web.pdb
+C:\Users\marat\Desktop\ConcertTicketPlatform\ConcertTicketPlatform.Web\obj\Debug\net9.0\ref\ConcertTicketPlatform.Web.dll

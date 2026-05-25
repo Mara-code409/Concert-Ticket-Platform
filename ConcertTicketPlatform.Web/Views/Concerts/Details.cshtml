@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Concert Details";
+}
+<div id="concert-details">Loading...</div>
+<a asp-action="Index" class="btn btn-secondary mt-3">Back to Concerts</a>
+
+@section Scripts {
+    <script>
+        const id = window.location.pathname.split('/').pop();
+        fetch(`https://localhost:7283/api/concerts/${id}`)
+            .then(r => r.json())
+            .then(c => {
+                document.getElementById('concert-details').innerHTML = `
+                    <h2>${c.title}</h2>
+                    <p><strong>Artist:</strong> ${c.artist?.name ?? 'N/A'}</p>
+                    <p><strong>Venue:</strong> ${c.venue?.name ?? 'N/A'}</p>
+                    <p><strong>Date:</strong> ${new Date(c.date).toLocaleDateString()}</p>
+                    <p><strong>Price:</strong> $${c.price}</p>
+                    <p><strong>Available Seats:</strong> ${c.availableSeats}</p>`;
+            });
+    </script>
+}

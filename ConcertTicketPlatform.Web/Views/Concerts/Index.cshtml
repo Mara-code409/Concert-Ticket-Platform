@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Concerts";
+}
+<h2>All Concerts</h2>
+<div class="row" id="concerts-container">
+    <p>Loading concerts...</p>
+</div>
+
+@section Scripts {
+    <script>
+        fetch('https://localhost:7283/api/concerts')
+            .then(r => r.json())
+            .then(data => {
+                const container = document.getElementById('concerts-container');
+                container.innerHTML = '';
+                if (data.length === 0) {
+                    container.innerHTML = '<p>No concerts available.</p>';
+                    return;
+                }
+                data.forEach(c => {
+                    container.innerHTML += `
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">${c.title}</h5>
+                                    <p class="card-text">Date: ${new Date(c.date).toLocaleDateString()}</p>
+                                    <p class="card-text">Price: $${c.price}</p>
+                                    <p class="card-text">Seats: ${c.availableSeats}</p>
+                                    <a href="/Concerts/Details/${c.id}" class="btn btn-primary">Details</a>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            })
+            .catch(e => document.getElementById('concerts-container').innerHTML = '<p>Error loading concerts.</p>');
+    </script>
+}
