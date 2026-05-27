@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using ConcertTicketPlatform.Core.Entities;
 using ConcertTicketPlatform.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConcertTicketPlatform.API.Controllers
 {
@@ -10,39 +11,76 @@ namespace ConcertTicketPlatform.API.Controllers
     [Route("api/[controller]")]
     public class ReviewsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly AppDbContext               _context;
         private readonly ILogger<ReviewsController> _logger;
 
         public ReviewsController(AppDbContext context, ILogger<ReviewsController> logger)
         {
             _context = context;
-            _logger = logger;
+            _logger  = logger;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] int? concertId, [FromQuery] int? artistId)
         {
-            var reviews = await _context.Reviews
-                .Include(r => r.Concert)
-                .ToListAsync();
-            return Ok(reviews);
-        }
+            var query = _context.Reviews.AsQueryable();
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var review = await _context.Reviews.FindAsync(id);
-            if (review == null) return NotFound();
-            return Ok(review);
+            if (concertId.HasValue)
+                query = query.Where(r => r.ConcertId == concertId.Value);
+
+            if (artistId.HasValue)
+                query = query.Where(r => r.Concert.ArtistId == artistId.Value
+                                      && r.Concert.Date < DateTime.UtcNow);
+
+            var reviews = await query
+                .OrderByDescending(r => r.CreatedAt)
+                .Select(r => new
+                {
+                    r.Id,
+                    r.Rating,
+                    r.Comment,
+                    r.ConcertId,
+                    ConcertTitle = r.Concert.Title,
+                    CreatedAt    = r.CreatedAt,
+                    UserName     = r.User != null
+                                    ? (r.User.FullName != "" ? r.User.FullName : r.User.Email)
+                                    : "Anonim"
+                })
+                .ToListAsync();
+
+            return Ok(reviews);
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Create(Review review)
+        public async Task<IActionResult> Create([FromBody] CreateReviewDto dto)
         {
+            if (dto.Rating < 1 || dto.Rating > 5)
+                return BadRequest(new { message = "Rating-ul trebuie să fie între 1 și 5." });
+
+            if (string.IsNullOrWhiteSpace(dto.Comment))
+                return BadRequest(new { message = "Comentariul nu poate fi gol." });
+
+            var concertExists = await _context.Concerts.AnyAsync(c => c.Id == dto.ConcertId);
+            if (!concertExists) return NotFound(new { message = "Concertul nu există." });
+
+            var userId = User.FindFirstValue("sub") ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var review = new Review
+            {
+                ConcertId = dto.ConcertId,
+                Rating    = dto.Rating,
+                Comment   = dto.Comment.Trim(),
+                UserId    = userId!,
+                CreatedAt = DateTime.UtcNow
+            };
+
             _context.Reviews.Add(review);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = review.Id }, review);
+            _logger.LogInformation("Review added for concert {ConcertId}", dto.ConcertId);
+
+            return CreatedAtAction(nameof(GetAll), new { concertId = review.ConcertId },
+                new { review.Id, review.Rating, review.Comment });
         }
 
         [HttpDelete("{id}")]
@@ -56,4 +94,6 @@ namespace ConcertTicketPlatform.API.Controllers
             return NoContent();
         }
     }
+
+    public record CreateReviewDto(int ConcertId, int Rating, string Comment);
 }

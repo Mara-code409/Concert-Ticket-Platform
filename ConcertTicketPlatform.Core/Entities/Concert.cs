@@ -1,6 +1,4 @@
-﻿using System.Net.Sockets;
-
-namespace ConcertTicketPlatform.Core.Entities
+﻿namespace ConcertTicketPlatform.Core.Entities
 {
     public class Concert
     {

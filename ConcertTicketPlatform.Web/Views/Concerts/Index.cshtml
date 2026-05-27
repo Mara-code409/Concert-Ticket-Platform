@@ -1,37 +1,257 @@
-﻿@{
-    ViewData["Title"] = "Concerts";
+@{
+    ViewData["Title"] = "Concerte";
 }
-<h2>All Concerts</h2>
-<div class="row" id="concerts-container">
-    <p>Loading concerts...</p>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Toate Concertele</h2>
+    <span id="results-count" class="text-muted"></span>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white fw-bold">
+                Filtre
+            </div>
+            <div class="card-body">
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Caută</label>
+                    <input type="text" id="filter-search" class="form-control" placeholder="Titlu sau artist..." />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Gen muzical</label>
+                    <div id="filter-categories">
+                        <div class="form-check">
+                            <input class="form-check-input cat-check" type="checkbox" value="" id="cat-all" checked>
+                            <label class="form-check-label" for="cat-all">Toate</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Oraș</label>
+                    <select id="filter-city" class="form-select">
+                        <option value="">Toate orașele</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Preț (RON)</label>
+                    <div class="d-flex gap-2">
+                        <input type="number" id="filter-min-price" class="form-control" placeholder="Min" min="0" />
+                        <input type="number" id="filter-max-price" class="form-control" placeholder="Max" min="0" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Dată</label>
+                    <input type="date" id="filter-date-from" class="form-control mb-1" />
+                    <input type="date" id="filter-date-to" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="filter-available">
+                        <label class="form-check-label" for="filter-available">
+                            Doar cu locuri disponibile
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary w-100" onclick="applyFilters()">Aplică filtrele</button>
+                <button class="btn btn-outline-secondary w-100 mt-2" onclick="resetFilters()">Resetează</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="row" id="concerts-container">
+            <div class="text-center py-5">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-2">Se încarcă concertele...</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section Scripts {
-    <script>
-        fetch('https://localhost:7283/api/concerts')
-            .then(r => r.json())
+<script>
+    const API = window.API_BASE;
+
+    fetch(`${API}/api/concerts/filters`)
+        .then(r => r.json())
+        .then(f => {
+            const catDiv = document.getElementById('filter-categories');
+            catDiv.innerHTML = `<div class="form-check">
+                <input class="form-check-input cat-check" type="checkbox" value="" id="cat-all" checked>
+                <label class="form-check-label" for="cat-all">Toate</label>
+            </div>`;
+            f.categories.forEach(cat => {
+                catDiv.innerHTML += `<div class="form-check">
+                    <input class="form-check-input cat-check" type="checkbox" value="${cat}" id="cat-${cat}">
+                    <label class="form-check-label" for="cat-${cat}">${cat}</label>
+                </div>`;
+            });
+
+            const citySelect = document.getElementById('filter-city');
+            f.cities.forEach(city => {
+                citySelect.innerHTML += `<option value="${city}">${city}</option>`;
+            });
+
+            if (f.maxPrice) {
+                document.getElementById('filter-max-price').placeholder = `Max (${f.maxPrice})`;
+            }
+
+            attachCategoryEvents();
+        })
+        .catch(() => {});
+
+    function attachCategoryEvents() {
+        document.querySelectorAll('.cat-check').forEach(cb => {
+            cb.addEventListener('change', function () {
+                if (this.value === '') {
+                    document.querySelectorAll('.cat-check').forEach(x => {
+                        if (x.value !== '') x.checked = false;
+                    });
+                    this.checked = true;
+                } else {
+                    document.getElementById('cat-all').checked = false;
+                    const anyChecked = [...document.querySelectorAll('.cat-check')]
+                        .some(x => x.value !== '' && x.checked);
+                    if (!anyChecked) document.getElementById('cat-all').checked = true;
+                }
+            });
+        });
+    }
+
+    let searchTimer;
+    document.getElementById('filter-search').addEventListener('input', () => {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(applyFilters, 400);
+    });
+
+    function buildUrl() {
+        const params = new URLSearchParams();
+
+        const search = document.getElementById('filter-search').value.trim();
+        if (search) params.append('search', search);
+
+        const selectedCats = [...document.querySelectorAll('.cat-check:checked')]
+            .map(x => x.value).filter(v => v !== '');
+        if (selectedCats.length === 1) params.append('category', selectedCats[0]);
+
+        const city = document.getElementById('filter-city').value;
+        if (city) params.append('city', city);
+
+        const minPrice = document.getElementById('filter-min-price').value;
+        if (minPrice) params.append('minPrice', minPrice);
+
+        const maxPrice = document.getElementById('filter-max-price').value;
+        if (maxPrice) params.append('maxPrice', maxPrice);
+
+        const dateFrom = document.getElementById('filter-date-from').value;
+        if (dateFrom) params.append('dateFrom', dateFrom);
+
+        const dateTo = document.getElementById('filter-date-to').value;
+        if (dateTo) params.append('dateTo', dateTo);
+
+        if (document.getElementById('filter-available').checked)
+            params.append('availableOnly', 'true');
+
+        return `${API}/api/concerts?${params.toString()}`;
+    }
+
+    function applyFilters() {
+        const container = document.getElementById('concerts-container');
+        container.innerHTML = `<div class="text-center py-5 w-100">
+            <div class="spinner-border text-primary" role="status"></div>
+        </div>`;
+
+        fetch(buildUrl())
+            .then(r => {
+                if (!r.ok) throw new Error(`Server ${r.status}`);
+                return r.json();
+            })
             .then(data => {
-                const container = document.getElementById('concerts-container');
+                const concerts = Array.isArray(data) ? data : (data.$values ?? []);
                 container.innerHTML = '';
-                if (data.length === 0) {
-                    container.innerHTML = '<p>No concerts available.</p>';
+                document.getElementById('results-count').textContent =
+                    concerts.length === 0 ? 'Niciun rezultat' : `${concerts.length} concert${concerts.length !== 1 ? 'e' : ''} găsite`;
+
+                if (concerts.length === 0) {
+                    container.innerHTML = `<div class="col-12 text-center py-5">
+                        <p class="text-muted fs-5">Niciun concert găsit pentru filtrele selectate.</p>
+                        <button class="btn btn-outline-primary" onclick="resetFilters()">Resetează filtrele</button>
+                    </div>`;
                     return;
                 }
-                data.forEach(c => {
+
+                concerts.forEach(c => {
+                    const isSoldOut = c.availableSeats === 0;
+                    const isPast    = new Date(c.date) < new Date();
+                    const dimClass  = (isSoldOut || isPast) ? 'border-secondary opacity-75' : '';
+                    const btnLabel  = isPast ? '🎭 Concert trecut' : (isSoldOut ? 'Vezi detalii' : 'Detalii & Cumpără');
+                    const btnClass  = isPast ? 'btn-secondary' : 'btn-primary';
+
                     container.innerHTML += `
-                        <div class="col-md-4 mb-3">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">${c.title}</h5>
-                                    <p class="card-text">Date: ${new Date(c.date).toLocaleDateString()}</p>
-                                    <p class="card-text">Price: $${c.price}</p>
-                                    <p class="card-text">Seats: ${c.availableSeats}</p>
-                                    <a href="/Concerts/Details/${c.id}" class="btn btn-primary">Details</a>
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100 shadow-sm ${dimClass}">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="d-flex justify-content-between align-items-start mb-1 flex-wrap gap-1">
+                                        <span class="badge bg-primary">${c.categoryName}</span>
+                                        ${isPast    ? '<span class="badge bg-secondary">Trecut</span>' : ''}
+                                        ${!isPast && isSoldOut ? '<span class="badge bg-danger">Epuizat</span>' : ''}
+                                    </div>
+                                    <h5 class="card-title mt-1">${c.title}</h5>
+                                    <p class="card-text text-muted mb-1">
+                                        🎤 ${c.artistName}
+                                        <span class="badge bg-light text-dark ms-1">${c.artistGenre}</span>
+                                    </p>
+                                    <p class="card-text mb-1">
+                                        <small>📍 ${c.venueName}, ${c.venueCity}</small>
+                                    </p>
+                                    <p class="card-text mb-1">
+                                        <small>📅 ${new Date(c.date).toLocaleDateString('ro-RO', {day:'numeric', month:'long', year:'numeric'})}</small>
+                                    </p>
+                                    <p class="card-text mb-1">
+                                        <strong class="${isPast ? 'text-muted' : 'text-success'}">${c.price} RON</strong>
+                                    </p>
+                                    ${!isPast ? `<p class="card-text mb-2">
+                                        <small class="${isSoldOut ? 'text-danger' : 'text-muted'}">
+                                            🎟️ ${c.availableSeats} / ${c.totalSeats} locuri
+                                        </small>
+                                    </p>` : ''}
+                                    <div class="mt-auto">
+                                        <a href="/Concerts/Details/${c.id}" class="btn ${btnClass} btn-sm w-100">
+                                            ${btnLabel}
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>`;
                 });
             })
-            .catch(e => document.getElementById('concerts-container').innerHTML = '<p>Error loading concerts.</p>');
-    </script>
+            .catch(e => {
+                container.innerHTML = `<p class="text-danger">Eroare: ${e.message}</p>`;
+            });
+    }
+
+    function resetFilters() {
+        document.getElementById('filter-search').value = '';
+        document.getElementById('filter-city').value = '';
+        document.getElementById('filter-min-price').value = '';
+        document.getElementById('filter-max-price').value = '';
+        document.getElementById('filter-date-from').value = '';
+        document.getElementById('filter-date-to').value = '';
+        document.getElementById('filter-available').checked = false;
+        document.querySelectorAll('.cat-check').forEach(x => x.checked = false);
+        const allCheck = document.getElementById('cat-all');
+        if (allCheck) allCheck.checked = true;
+        applyFilters();
+    }
+
+    applyFilters();
+</script>
 }

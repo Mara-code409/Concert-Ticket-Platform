@@ -1,0 +1,23 @@
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 8080
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+COPY ConcertTicketPlatform.Core/ConcertTicketPlatform.Core.csproj ConcertTicketPlatform.Core/
+COPY ConcertTicketPlatform.Infrastructure/ConcertTicketPlatform.Infrastructure.csproj ConcertTicketPlatform.Infrastructure/
+COPY ConcertTicketPlatform.Web/ConcertTicketPlatform.Web.csproj ConcertTicketPlatform.Web/
+
+RUN dotnet restore ConcertTicketPlatform.Web/ConcertTicketPlatform.Web.csproj
+
+COPY ConcertTicketPlatform.Core/ ConcertTicketPlatform.Core/
+COPY ConcertTicketPlatform.Infrastructure/ ConcertTicketPlatform.Infrastructure/
+COPY ConcertTicketPlatform.Web/ ConcertTicketPlatform.Web/
+
+RUN dotnet publish ConcertTicketPlatform.Web/ConcertTicketPlatform.Web.csproj -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "ConcertTicketPlatform.Web.dll"]

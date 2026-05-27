@@ -14,18 +14,31 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
 
 builder.Services.AddHttpClient("API", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7283/");
+    var baseUrl = builder.Configuration["ApiBaseUrl"] ?? "https://localhost:7283/";
+    client.BaseAddress = new Uri(baseUrl);
+});
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout        = TimeSpan.FromDays(7);
+    options.Cookie.HttpOnly    = true;
+    options.Cookie.IsEssential = true;
 });
 
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

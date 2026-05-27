@@ -1,28 +1,49 @@
 ﻿@{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Înregistrare";
 }
 <div class="row justify-content-center">
-    <div class="col-md-4">
-        <h2>Register</h2>
-        <form method="post">
-            <div class="mb-3">
-                <label class="form-label">Full Name</label>
-                <input type="text" name="fullName" class="form-control" required />
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">📝 Creează cont</h4>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" name="email" class="form-control" required />
+            <div class="card-body">
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger">
+                        <ul class="mb-0 ps-3">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        </ul>
+                    </div>
+                }
+                <form asp-controller="Account" asp-action="Register" method="post">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Nume complet</label>
+                        <input type="text" name="fullName" class="form-control"
+                               placeholder="Ion Popescu" required />
+                        <div class="form-text">Numele tău complet, vizibil în profil.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input type="email" name="email" class="form-control"
+                               placeholder="exemplu@email.com" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Parolă</label>
+                        <input type="password" name="password" class="form-control"
+                               placeholder="Minim 6 caractere" required />
+                        <div class="form-text">Parola trebuie să conțină cel puțin o literă mare, o cifră și un caracter special.</div>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Creează contul</button>
+                </form>
+                <hr />
+                <p class="text-center mb-0">
+                    Ai deja cont? <a asp-action="Login" class="text-decoration-none">Autentifică-te</a>
+                </p>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" required />
-            </div>
-            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-            {
-                <div class="alert alert-danger">@error.ErrorMessage</div>
-            }
-            <button type="submit" class="btn btn-primary w-100">Register</button>
-        </form>
-        <p class="mt-3">Already have an account? <a asp-action="Login">Login</a></p>
+        </div>
     </div>
 </div>
