@@ -1,0 +1,19 @@
+# Build artifacts
+**/bin/
+**/obj/
+
+# Visual Studio
+.vs/
+
+# Logs
+**/logs/
+
+# User-specific files
+*.user
+*.suo
+
+# Node modules
+**/node_modules/
+
+# Angular build
+concert-angular/dist/

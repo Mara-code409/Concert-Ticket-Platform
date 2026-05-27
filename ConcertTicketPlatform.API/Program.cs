@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using ConcertTicketPlatform.Core.Entities;
 using ConcertTicketPlatform.Core.Interfaces;
 using ConcertTicketPlatform.Infrastructure.Data;
@@ -31,7 +31,20 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
 builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
 builder.Services.AddScoped<IConcertRepository, ConcertRepository>();
 
-builder.Services.AddControllers();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular", policy =>
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials());
+});
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -55,9 +68,44 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+
+// Seed data
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    if (!context.Venues.Any())
+    {
+        context.Venues.Add(new ConcertTicketPlatform.Core.Entities.Venue
+        { Name = "Arena Națională", Address = "Str. Maior Coravu 2", City = "București", Capacity = 55000 });
+        context.SaveChanges();
+    }
+
+    if (!context.Artists.Any())
+    {
+        context.Artists.Add(new ConcertTicketPlatform.Core.Entities.Artist
+        { Name = "Metallica", Bio = "American heavy metal band", Genre = "Metal", ImageUrl = "" });
+        context.SaveChanges();
+    }
+
+    if (!context.Categories.Any())
+    {
+        context.Categories.Add(new ConcertTicketPlatform.Core.Entities.Category { Name = "Metal" });
+        context.SaveChanges();
+    }
+
+    if (!context.Concerts.Any())
+    {
+        context.Concerts.Add(new ConcertTicketPlatform.Core.Entities.Concert
+        { Title = "Metallica World Tour", Date = new DateTime(2025, 7, 15), Price = 250, TotalSeats = 1000, AvailableSeats = 1000, ArtistId = 1, VenueId = 1, CategoryId = 1 });
+        context.SaveChanges();
+    }
+}
+
 app.UseMiddleware<ConcertTicketPlatform.API.Middleware.ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
+app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

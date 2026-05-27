@@ -1,0 +1,20 @@
+<div style="padding: 20px; font-family: Arial;">
+  <h2>🎵 Concerts</h2>
+  @if (loading) {
+    <div>Loading...</div>
+  }
+  @if (error) {
+    <div style="color:red">{{ error }}</div>
+  }
+  @for (c of concerts; track c.id) {
+    <div style="border:1px solid #ccc; padding:10px; margin:10px 0; border-radius:5px;">
+      <h3>{{ c.title }}</h3>
+      <p>📅 {{ c.date | date }}</p>
+      <p>💰 ${{ c.price }}</p>
+      <p>🪑 Seats: {{ c.availableSeats }}</p>
+    </div>
+  }
+  @if (!loading && concerts.length === 0) {
+    <p>No concerts available.</p>
+  }
+</div>
