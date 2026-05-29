@@ -43,6 +43,11 @@ namespace ConcertTicketPlatform.Infrastructure.Data
                 .HasOne(r => r.Concert)
                 .WithMany(c => c.Reviews)
                 .HasForeignKey(r => r.ConcertId);
+
+            builder.Entity<Artist>()
+                .HasMany(a => a.Categories)
+                .WithMany(c => c.Artists)
+                .UsingEntity("ArtistCategories");
         }
     }
 }

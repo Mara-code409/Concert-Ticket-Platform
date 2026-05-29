@@ -11,5 +11,6 @@ namespace ConcertTicketPlatform.Core.Entities
         public string ImageUrl { get; set; } = string.Empty;
 
         public ICollection<Concert> Concerts { get; set; } = new List<Concert>();
+        public ICollection<Category> Categories { get; set; } = new List<Category>();
     }
 }

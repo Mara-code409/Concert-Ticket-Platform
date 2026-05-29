@@ -22,6 +22,21 @@ namespace ConcertTicketPlatform.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ArtistCategories", b =>
+                {
+                    b.Property<int>("ArtistId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ArtistId", "CategoryId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("ArtistCategories");
+                });
+
             modelBuilder.Entity("ConcertTicketPlatform.Core.Entities.AppUser", b =>
                 {
                     b.Property<string>("Id")
@@ -410,6 +425,21 @@ namespace ConcertTicketPlatform.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("ArtistCategories", b =>
+                {
+                    b.HasOne("ConcertTicketPlatform.Core.Entities.Artist", null)
+                        .WithMany()
+                        .HasForeignKey("ArtistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConcertTicketPlatform.Core.Entities.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ConcertTicketPlatform.Core.Entities.Concert", b =>
                 {
                     b.HasOne("ConcertTicketPlatform.Core.Entities.Artist", "Artist")
@@ -535,11 +565,13 @@ namespace ConcertTicketPlatform.Infrastructure.Migrations
 
             modelBuilder.Entity("ConcertTicketPlatform.Core.Entities.Artist", b =>
                 {
+                    b.Navigation("Categories");
                     b.Navigation("Concerts");
                 });
 
             modelBuilder.Entity("ConcertTicketPlatform.Core.Entities.Category", b =>
                 {
+                    b.Navigation("Artists");
                     b.Navigation("Concerts");
                 });
 
