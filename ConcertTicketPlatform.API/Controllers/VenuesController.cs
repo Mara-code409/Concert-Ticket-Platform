@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using ConcertTicketPlatform.Core.DTOs;
 using ConcertTicketPlatform.Core.Entities;
 using ConcertTicketPlatform.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConcertTicketPlatform.API.Controllers
@@ -15,13 +17,15 @@ namespace ConcertTicketPlatform.API.Controllers
         public VenuesController(AppDbContext context, ILogger<VenuesController> logger)
         {
             _context = context;
-            _logger = logger;
+            _logger  = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var venues = await _context.Venues.ToListAsync();
+            var venues = await _context.Venues
+                .Select(v => new VenueDto(v.Id, v.Name, v.City, v.Address, v.Capacity))
+                .ToListAsync();
             return Ok(venues);
         }
 
@@ -30,27 +34,36 @@ namespace ConcertTicketPlatform.API.Controllers
         {
             var venue = await _context.Venues.FindAsync(id);
             if (venue == null) return NotFound();
-            return Ok(venue);
+            return Ok(new VenueDto(venue.Id, venue.Name, venue.City, venue.Address, venue.Capacity));
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Venue venue)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create([FromBody] VenueDto dto)
         {
+            var venue = new Venue { Name = dto.Name, City = dto.City, Address = dto.Address, Capacity = dto.Capacity };
             _context.Venues.Add(venue);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = venue.Id }, venue);
+            return CreatedAtAction(nameof(GetById), new { id = venue.Id },
+                new VenueDto(venue.Id, venue.Name, venue.City, venue.Address, venue.Capacity));
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, Venue venue)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Update(int id, [FromBody] VenueDto dto)
         {
-            if (id != venue.Id) return BadRequest();
-            _context.Entry(venue).State = EntityState.Modified;
+            var venue = await _context.Venues.FindAsync(id);
+            if (venue == null) return NotFound();
+            venue.Name     = dto.Name;
+            venue.City     = dto.City;
+            venue.Address  = dto.Address;
+            venue.Capacity = dto.Capacity;
             await _context.SaveChangesAsync();
             return NoContent();
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             var venue = await _context.Venues.FindAsync(id);

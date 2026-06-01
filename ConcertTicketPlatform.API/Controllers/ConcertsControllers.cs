@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ConcertTicketPlatform.Core.Entities;
+﻿using ConcertTicketPlatform.Core.Entities;
+using ConcertTicketPlatform.Core.Interfaces;
 using ConcertTicketPlatform.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConcertTicketPlatform.API.Controllers
@@ -10,12 +12,14 @@ namespace ConcertTicketPlatform.API.Controllers
     public class ConcertsController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IConcertService _concertService;
         private readonly ILogger<ConcertsController> _logger;
 
-        public ConcertsController(AppDbContext context, ILogger<ConcertsController> logger)
+        public ConcertsController(AppDbContext context, IConcertService concertService, ILogger<ConcertsController> logger)
         {
-            _context = context;
-            _logger = logger;
+            _context        = context;
+            _concertService = concertService;
+            _logger         = logger;
         }
 
         [HttpGet]
@@ -113,29 +117,29 @@ namespace ConcertTicketPlatform.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Concert concert)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create([FromBody] Concert concert)
         {
-            _context.Concerts.Add(concert);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = concert.Id }, concert);
+            var created = await _concertService.CreateAsync(concert);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, new { created.Id, created.Title });
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, Concert concert)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Update(int id, [FromBody] Concert concert)
         {
             if (id != concert.Id) return BadRequest();
-            _context.Entry(concert).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await _concertService.UpdateAsync(concert);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
-            var concert = await _context.Concerts.FindAsync(id);
-            if (concert == null) return NotFound();
-            _context.Concerts.Remove(concert);
-            await _context.SaveChangesAsync();
+            var existing = await _concertService.GetByIdAsync(id);
+            if (existing == null) return NotFound();
+            await _concertService.DeleteAsync(id);
             return NoContent();
         }
     }

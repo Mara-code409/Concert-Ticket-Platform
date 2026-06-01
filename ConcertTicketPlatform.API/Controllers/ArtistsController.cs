@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using ConcertTicketPlatform.Core.DTOs;
 using ConcertTicketPlatform.Core.Entities;
-using ConcertTicketPlatform.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+using ConcertTicketPlatform.Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ConcertTicketPlatform.API.Controllers
 {
@@ -9,55 +10,69 @@ namespace ConcertTicketPlatform.API.Controllers
     [Route("api/[controller]")]
     public class ArtistsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IArtistService _artistService;
         private readonly ILogger<ArtistsController> _logger;
 
-        public ArtistsController(AppDbContext context, ILogger<ArtistsController> logger)
+        public ArtistsController(IArtistService artistService, ILogger<ArtistsController> logger)
         {
-            _context = context;
-            _logger = logger;
+            _artistService = artistService;
+            _logger        = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             _logger.LogInformation("Getting all artists");
-            var artists = await _context.Artists.ToListAsync();
-            return Ok(artists);
+            var artists = await _artistService.GetAllAsync();
+            var dtos = artists.Select(a => new ArtistDto(a.Id, a.Name, a.Genre, a.Bio, a.ImageUrl));
+            return Ok(dtos);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var artist = await _context.Artists.FindAsync(id);
+            var artist = await _artistService.GetByIdAsync(id);
             if (artist == null) return NotFound();
-            return Ok(artist);
+            return Ok(new ArtistDto(artist.Id, artist.Name, artist.Genre, artist.Bio, artist.ImageUrl));
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Artist artist)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create([FromBody] CreateArtistDto dto)
         {
-            _context.Artists.Add(artist);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = artist.Id }, artist);
+            var artist = new Artist
+            {
+                Name     = dto.Name,
+                Genre    = dto.Genre,
+                Bio      = dto.Bio,
+                ImageUrl = dto.ImageUrl
+            };
+            var created = await _artistService.CreateAsync(artist);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id },
+                new ArtistDto(created.Id, created.Name, created.Genre, created.Bio, created.ImageUrl));
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, Artist artist)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Update(int id, [FromBody] CreateArtistDto dto)
         {
-            if (id != artist.Id) return BadRequest();
-            _context.Entry(artist).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            var existing = await _artistService.GetByIdAsync(id);
+            if (existing == null) return NotFound();
+            existing.Name     = dto.Name;
+            existing.Genre    = dto.Genre;
+            existing.Bio      = dto.Bio;
+            existing.ImageUrl = dto.ImageUrl;
+            await _artistService.UpdateAsync(existing);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
-            var artist = await _context.Artists.FindAsync(id);
-            if (artist == null) return NotFound();
-            _context.Artists.Remove(artist);
-            await _context.SaveChangesAsync();
+            var existing = await _artistService.GetByIdAsync(id);
+            if (existing == null) return NotFound();
+            await _artistService.DeleteAsync(id);
             return NoContent();
         }
     }
