@@ -1,19 +1,6 @@
-﻿namespace ConcertTicketPlatform.Core.DTOs
+namespace ConcertTicketPlatform.Core.DTOs
 {
-    public class ArtistDto
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Bio { get; set; } = string.Empty;
-        public string Genre { get; set; } = string.Empty;
-        public string ImageUrl { get; set; } = string.Empty;
-    }
+    public record ArtistDto(int Id, string Name, string Genre, string Bio, string ImageUrl);
 
-    public class CreateArtistDto
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Bio { get; set; } = string.Empty;
-        public string Genre { get; set; } = string.Empty;
-        public string ImageUrl { get; set; } = string.Empty;
-    }
+    public record CreateArtistDto(string Name, string Genre, string Bio, string ImageUrl);
 }

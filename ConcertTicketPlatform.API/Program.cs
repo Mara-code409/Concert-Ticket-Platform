@@ -4,6 +4,7 @@ using ConcertTicketPlatform.Core.Entities;
 using ConcertTicketPlatform.Core.Interfaces;
 using ConcertTicketPlatform.Infrastructure.Data;
 using ConcertTicketPlatform.Infrastructure.Repositories;
+using ConcertTicketPlatform.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +48,8 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
 builder.Services.AddScoped<IConcertRepository, ConcertRepository>();
+builder.Services.AddScoped<IArtistService, ArtistService>();
+builder.Services.AddScoped<IConcertService, ConcertService>();
 
 builder.Services.AddCors(options =>
 {
@@ -137,6 +140,22 @@ using (var scope = app.Services.CreateScope())
         var kendrick   = new ConcertTicketPlatform.Core.Entities.Artist { Name = "Kendrick Lamar", Bio = "Rapper american din Compton, California, considerat unul dintre cei mai mari MC din istoria hip-hop-ului. Câștigător al Premiului Pulitzer.",                   Genre = "Hip-Hop",    ImageUrl = "" };
         var norah      = new ConcertTicketPlatform.Core.Entities.Artist { Name = "Norah Jones",    Bio = "Cântăreață și pianistă americană de jazz-pop, câștigătoare a 9 premii Grammy, cu un stil distinctiv și cald.",                                                 Genre = "Jazz",       ImageUrl = "" };
         context.Artists.AddRange(metallica, ironMaiden, coldplay, acdc, edSheeran, adele, duaLipa, prodigy, guetta, garrix, kendrick, norah);
+        context.SaveChanges();
+
+        metallica.Categories.Add(metal);
+        metallica.Categories.Add(rock);
+        ironMaiden.Categories.Add(metal);
+        coldplay.Categories.Add(rock);
+        coldplay.Categories.Add(pop);
+        acdc.Categories.Add(rock);
+        edSheeran.Categories.Add(pop);
+        adele.Categories.Add(pop);
+        duaLipa.Categories.Add(pop);
+        prodigy.Categories.Add(electronic);
+        guetta.Categories.Add(electronic);
+        garrix.Categories.Add(electronic);
+        kendrick.Categories.Add(hipHop);
+        norah.Categories.Add(jazz);
         context.SaveChanges();
 
         context.Concerts.AddRange(
