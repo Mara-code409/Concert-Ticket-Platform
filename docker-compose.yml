@@ -12,6 +12,12 @@ services:
     networks:
       - studlab_net
     restart: on-failure
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/localhost/1433' 2>/dev/null && echo OK"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 20s
 
   api:
     container_name: student-mara-api
@@ -27,7 +33,8 @@ services:
       - Jwt__Issuer=ConcertTicketAPI
       - Jwt__Audience=ConcertTicketWeb
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - studlab_net
     restart: on-failure

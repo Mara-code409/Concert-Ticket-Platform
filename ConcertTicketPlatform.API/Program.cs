@@ -78,7 +78,23 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    context.Database.Migrate();
+
+    var migrated = false;
+    for (int attempt = 1; attempt <= 10; attempt++)
+    {
+        try
+        {
+            context.Database.Migrate();
+            migrated = true;
+            break;
+        }
+        catch
+        {
+            if (attempt == 10) throw;
+            Console.WriteLine($"DB not ready, retry {attempt}/10 in 5s...");
+            Thread.Sleep(5000);
+        }
+    }
 
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     foreach (var role in new[] { "Admin", "User" })
