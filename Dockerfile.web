@@ -20,4 +20,5 @@ RUN dotnet publish ConcertTicketPlatform.Web/ConcertTicketPlatform.Web.csproj -c
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
+ENV DOTNET_USE_POLLING_FILE_WATCHER=1
 ENTRYPOINT ["dotnet", "ConcertTicketPlatform.Web.dll"]
