@@ -11,6 +11,7 @@ services:
       - "1433"
     networks:
       - studlab_net
+    restart: on-failure
 
   api:
     container_name: student-mara-api
@@ -29,9 +30,10 @@ services:
       - db
     networks:
       - studlab_net
+    restart: on-failure
 
   web:
-    container_name: student-mara-web
+    container_name: student-mara-frontend
     build:
       context: .
       dockerfile: Dockerfile.web
@@ -40,6 +42,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_HTTP_PORTS=80
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
       - ConnectionStrings__DefaultConnection=Server=student-mara-db;Database=ConcertTicketPlatformDb;User Id=sa;Password=ConcertTicket@2024;TrustServerCertificate=True;
       - ApiBaseUrl=http://student-mara-api:8080/
       - ApiPublicUrl=
@@ -47,6 +50,7 @@ services:
       - api
     networks:
       - studlab_net
+    restart: on-failure
 
 networks:
   studlab_net:
