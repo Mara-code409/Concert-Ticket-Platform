@@ -103,6 +103,15 @@ using (var scope = app.Services.CreateScope())
             await roleManager.CreateAsync(new IdentityRole(role));
     }
 
+    var adminUserMgr = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+    var adminUser = await adminUserMgr.FindByEmailAsync("admin@concertticket.ro");
+    if (adminUser == null)
+    {
+        adminUser = new AppUser { UserName = "admin@concertticket.ro", Email = "admin@concertticket.ro", FullName = "Administrator" };
+        await adminUserMgr.CreateAsync(adminUser, "Admin@1234");
+        await adminUserMgr.AddToRoleAsync(adminUser, "Admin");
+    }
+
     if (!context.Concerts.Any(c => c.Date > DateTime.UtcNow))
     {
         context.Tickets.RemoveRange(context.Tickets);
