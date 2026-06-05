@@ -33,7 +33,17 @@
         @RenderBody()
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>window.API_BASE = '@Configuration["ApiPublicUrl"]';</script>
+    <script>
+        (function() {
+            var configured = '@Configuration["ApiPublicUrl"]';
+            if (configured && configured !== '') {
+                window.API_BASE = configured;
+            } else {
+                var apiPort = window.location.port === '5000' ? '5001' : '7283';
+                window.API_BASE = window.location.protocol + '//' + window.location.hostname + ':' + apiPort;
+            }
+        })();
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
