@@ -565,13 +565,11 @@ namespace ConcertTicketPlatform.Infrastructure.Migrations
 
             modelBuilder.Entity("ConcertTicketPlatform.Core.Entities.Artist", b =>
                 {
-                    b.Navigation("Categories");
                     b.Navigation("Concerts");
                 });
 
             modelBuilder.Entity("ConcertTicketPlatform.Core.Entities.Category", b =>
                 {
-                    b.Navigation("Artists");
                     b.Navigation("Concerts");
                 });
 
