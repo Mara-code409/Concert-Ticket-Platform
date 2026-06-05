@@ -40,6 +40,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
       - ConnectionStrings__DefaultConnection=Server=db;Database=ConcertTicketPlatformDb;User Id=sa;Password=ConcertTicket@2024;TrustServerCertificate=True;
       - ApiBaseUrl=http://api:8080/
+      - ApiPublicUrl=http://concertticket.student-dev.ro:5001
     depends_on:
       - api
 
