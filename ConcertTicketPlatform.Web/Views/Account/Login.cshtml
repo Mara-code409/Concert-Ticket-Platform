@@ -14,16 +14,21 @@
                         <i class="bi bi-exclamation-circle"></i> @error.ErrorMessage
                     </div>
                 }
-                <form asp-controller="Account" asp-action="Login" method="post">
+                <form asp-controller="Account" asp-action="Login" method="post"
+                      id="login-form" novalidate>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Email</label>
-                        <input type="email" name="email" class="form-control @(!ViewData.ModelState.IsValid ? "is-invalid" : "")"
+                        <input type="email" name="email"
+                               class="form-control @(!ViewData.ModelState.IsValid ? "is-invalid" : "")"
                                placeholder="exemplu@email.com" required />
+                        <div class="invalid-feedback">Introduceți o adresă de email validă.</div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Parolă</label>
-                        <input type="password" name="password" class="form-control @(!ViewData.ModelState.IsValid ? "is-invalid" : "")"
-                               placeholder="••••••••" required />
+                        <input type="password" name="password"
+                               class="form-control @(!ViewData.ModelState.IsValid ? "is-invalid" : "")"
+                               placeholder="••••••••" required minlength="6" />
+                        <div class="invalid-feedback">Parola este obligatorie (minim 6 caractere).</div>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Intră în cont</button>
                 </form>
@@ -35,3 +40,15 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    document.getElementById('login-form').addEventListener('submit', function (e) {
+        if (!this.checkValidity()) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        this.classList.add('was-validated');
+    });
+</script>
+}
