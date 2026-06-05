@@ -1,48 +1,56 @@
 services:
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: student-mara-db
     environment:
       SA_PASSWORD: "ConcertTicket@2024"
       ACCEPT_EULA: "Y"
-    ports:
-      - "1433:1433"
     volumes:
       - sqldata:/var/opt/mssql
-    healthcheck:
-      test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "ConcertTicket@2024", "-Q", "SELECT 1"]
-      interval: 10s
-      retries: 10
-      start_period: 30s
+    expose:
+      - "1433"
+    networks:
+      - studlab_net
 
   api:
+    container_name: student-mara-api
     build:
       context: .
       dockerfile: Dockerfile.api
-    ports:
-      - "5001:8080"
+    expose:
+      - "8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Server=db;Database=ConcertTicketPlatformDb;User Id=sa;Password=ConcertTicket@2024;TrustServerCertificate=True;
+      - ConnectionStrings__DefaultConnection=Server=student-mara-db;Database=ConcertTicketPlatformDb;User Id=sa;Password=ConcertTicket@2024;TrustServerCertificate=True;
       - Jwt__Key=SuperSecretKey_ConcertTicket_2024_MinLength32Chars
       - Jwt__Issuer=ConcertTicketAPI
       - Jwt__Audience=ConcertTicketWeb
     depends_on:
-      db:
-        condition: service_healthy
+      - db
+    networks:
+      - studlab_net
 
   web:
+    container_name: student-mara-web
     build:
       context: .
       dockerfile: Dockerfile.web
-    ports:
-      - "5000:8080"
+    expose:
+      - "80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Server=db;Database=ConcertTicketPlatformDb;User Id=sa;Password=ConcertTicket@2024;TrustServerCertificate=True;
-      - ApiBaseUrl=http://api:8080/
-      - ApiPublicUrl=http://concertticket.student-dev.ro:5001
+      - ASPNETCORE_HTTP_PORTS=80
+      - ConnectionStrings__DefaultConnection=Server=student-mara-db;Database=ConcertTicketPlatformDb;User Id=sa;Password=ConcertTicket@2024;TrustServerCertificate=True;
+      - ApiBaseUrl=http://student-mara-api:8080/
+      - ApiPublicUrl=
     depends_on:
       - api
+    networks:
+      - studlab_net
+
+networks:
+  studlab_net:
+    external: true
 
 volumes:
   sqldata:
